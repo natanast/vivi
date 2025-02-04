@@ -20,7 +20,6 @@ nextflow.enable.dsl = 2
 include { VIVI  } from './workflows/vivi'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_vivi_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_vivi_pipeline'
-
 include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_vivi_pipeline'
 
 /*
