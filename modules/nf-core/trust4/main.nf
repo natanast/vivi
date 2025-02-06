@@ -3,8 +3,8 @@ process TRUST4 {
     label 'process_medium'
 
     conda "bioconda::trust4=1.0.13"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/trust4:1.0.13--h43eeafb_0':
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ? 
+        'https://depot.galaxyproject.org/singularity/trust4:1.0.13--h43eeafb_0' :
         'biocontainers/trust4:1.0.13--h43eeafb_0' }"
 
     input:
@@ -31,8 +31,13 @@ process TRUST4 {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def bam_mode = bam ? "-b ${bam}" : ''
     def reference = vdj_reference ? "--ref ${vdj_reference}" : ""
+    
+
+    def resultsDir = "${projectDir}/results/${prefix}/" 
 
     """
+    mkdir -p ${resultsDir}
+
     run-trust4 \\
         ${bam_mode} \\
         -t $task.cpus \\
@@ -40,6 +45,9 @@ process TRUST4 {
         -o ${prefix} \\
         ${reference} \\
         $args
+
+    # Copy output files to the desired directory
+    cp -r ${prefix}_* ${resultsDir}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
